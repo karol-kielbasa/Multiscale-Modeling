@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class MultiscaleModellingPanel extends JPanel implements Runnable {
 
-    private static final int BLOCK_SIZE = 2;
+    public static final int BLOCK_SIZE = 2;
 
     private Cells cells;
 
@@ -15,8 +15,11 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     private volatile boolean stop = true;
 
     public MultiscaleModellingPanel() {
-        cells = new Cells();
-        neighbourhood = new MooreNeighbourhood();
+    }
+
+    public void init(int x, int y){
+        cells = new Cells(x, y);
+        neighbourhood = new MooreNeighbourhood(x, y);
     }
 
     @Override
@@ -26,6 +29,10 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     }
 
     private void drawCells(Graphics g) {
+        if(cells == null){
+            return;
+        }
+
         cells.getCells().stream()
             .filter(Cell::isGrowing)
             .forEach(cell -> drawCell(cell, g));
@@ -67,7 +74,6 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
         cells.setCells(c);
         repaint();
     }
-
 
     public void addRandomCell() {
         cells.addRandomCell();

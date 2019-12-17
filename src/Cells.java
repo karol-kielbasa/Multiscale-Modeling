@@ -5,14 +5,19 @@ import java.util.stream.Collectors;
 
 public class Cells {
 
-    private static final int SIZE = 300;
     private static int uniqueIndex = 0;
     private List<Cell> cells;
 
+    private int xSize;
+    private int ySize;
+
     private Random generator = new Random();
 
-    public Cells() {
+    public Cells(int x, int y) {
+        this.xSize = x;
+        this.ySize = y;
         this.cells = initCells();
+
     }
 
     public List<Cell> copyCells() {
@@ -30,21 +35,21 @@ public class Cells {
     }
 
     public void addRandomCell() {
-        int i = generator.nextInt(300);
-        int j = generator.nextInt(300);
+        int i = generator.nextInt(xSize);
+        int j = generator.nextInt(ySize);
 
-        Cell cell = cells.get(i * SIZE + j);
+        Cell cell = cells.get(i * ySize  + j);
         cell.setId(++uniqueIndex);
         cell.setGrowing(true);
         ColorCache.addIdToCacheMap(cell.getId());
 
-        System.out.println("Cell added at x:" + i + "y:" + j + " with id: " + uniqueIndex);
+        System.out.println("Cell added at x: " + i + " y: " + j + " with id: " + uniqueIndex);
     }
 
     private List<Cell> initCells() {
         List<Cell> cells = new ArrayList<>();
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < ySize; j++) {
                 cells.add(new Cell(i, j));
             }
         }

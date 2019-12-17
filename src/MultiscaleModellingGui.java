@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.*;
 
 public class MultiscaleModellingGui extends JFrame implements ActionListener {
@@ -11,18 +12,25 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     private static final Dimension DEFAULT_WINDOW_SIZE = new Dimension(WIDTH, HEIGHT);
     private static final Dimension MINIMUM_WINDOW_SIZE = new Dimension(WIDTH, HEIGHT);
 
+    private static final String[] importExportFormats = {ImportExportTxt.format, ImportExportBmp.format};
+
     private JMenuBar menuBar;
     private JMenu menuFile, menuSimulation;
     private JMenuItem menuItemFileImport, menuItemFileExport, exitMenuItem, addRandomCellMenuItem;
     private JMenuItem startSimulationMenuItem, stopSimulationMenuItem, resetSimulationMenuItem;
+    private JFileChooser fileChooser = new JFileChooser();
 
     private MultiscaleModellingPanel multiscaleModellingPanel;
+
     private ImportExport importExport;
+    private ImportExport importExportBmp = new ImportExportBmp();
+    private ImportExport importExportTxt = new ImportExportTxt();
 
     public MultiscaleModellingGui() throws HeadlessException {
         guiInit();
         jFrameConfig();
 
+//        importExport = new ImportExportBmp();
         importExport = new ImportExportTxt();
     }
 
@@ -64,14 +72,13 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         System.out.println("GUI initialized successfully");
     }
 
-
     private void jFrameConfig() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Multiscale Modelling");
         setSize(DEFAULT_WINDOW_SIZE);
         setMinimumSize(MINIMUM_WINDOW_SIZE);
-        setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - getWidth())/2,
-            (Toolkit.getDefaultToolkit().getScreenSize().height - getHeight())/2);
+        setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - getHeight()) / 2);
         setVisible(true);
 
         System.out.println("Config initialized successfully");
@@ -82,14 +89,14 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         if (ae.getSource().equals(exitMenuItem)) {
             System.out.println("Application closed");
             System.exit(0);
-        }  else if (ae.getSource().equals(resetSimulationMenuItem)) {
+        } else if (ae.getSource().equals(resetSimulationMenuItem)) {
             resetSimulation();
         } else if (ae.getSource().equals(startSimulationMenuItem)) {
             startSimulation();
         } else if (ae.getSource().equals(stopSimulationMenuItem)) {
             stopSimulation();
         } else if (ae.getSource().equals(addRandomCellMenuItem)) {
-            addRandomCell();
+            addCells();
         } else if (ae.getSource().equals(menuItemFileImport)) {
             importFile();
         } else if (ae.getSource().equals(menuItemFileExport)) {
@@ -98,23 +105,132 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     }
 
     private void importFile() {
-        multiscaleModellingPanel.setCells(importExport.importFile());
+        final JFrame f_options = new JFrame();
+        f_options.setTitle("Options");
+        f_options.setSize(300, 60);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("Format"));
+
+        JButton importButton = new JButton("Import");
+        final JComboBox cb_seconds = new JComboBox(importExportFormats);
+        p_options.add(cb_seconds);
+        cb_seconds.setSelectedItem(importExportFormats[0]);
+        importButton.addActionListener(ae -> {
+            String selected = (String) cb_seconds.getSelectedItem();
+            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                try {
+                    if (ImportExportTxt.format.equals(selected)) {
+                        multiscaleModellingPanel.setCells(importExportTxt.importFile(file));
+                    } else {
+                        multiscaleModellingPanel.setCells(importExportBmp.importFile(file));
+                    }
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,
+                        e.getMessage(), "Source", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            f_options.dispose();
+        });
+        p_options.add(importButton);
+        f_options.setVisible(true);
     }
 
     private void exportFile() {
-        importExport.exportFile(multiscaleModellingPanel.getCells());
-        multiscaleModellingPanel.resetSimulation();
+        final JFrame f_options = new JFrame();
+        f_options.setTitle("Options");
+        f_options.setSize(300, 60);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("Format"));
+
+        JButton importButton = new JButton("Import");
+        final JComboBox cb_seconds = new JComboBox(importExportFormats);
+        p_options.add(cb_seconds);
+        cb_seconds.setSelectedItem(importExportFormats[0]);
+        importButton.addActionListener(ae -> {
+            String selected = (String) cb_seconds.getSelectedItem();
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                try {
+                    if (ImportExportTxt.format.equals(selected)) {
+                        importExportTxt.exportFile(multiscaleModellingPanel.getCells(),file);
+                    } else {
+                        importExportBmp.exportFile(multiscaleModellingPanel.getCells(),file);
+                    }
+                    multiscaleModellingPanel.resetSimulation();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null,
+                        e.getMessage(), "Source", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            f_options.dispose();
+        });
+        p_options.add(importButton);
+        f_options.setVisible(true);
     }
 
-    private void addRandomCell() {
-        multiscaleModellingPanel.addRandomCell();
-        System.out.println("Cell successfully added");
+    private void addCells() {
+        final JFrame f_options = new JFrame();
+        f_options.setTitle("Add cells");
+        f_options.setSize(300, 150);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        f_options.setAlwaysOnTop(true);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("X:"));
+        final JTextField xTextField = new JTextField("300");
+        p_options.add(xTextField);
+        p_options.add(new JLabel("Y:"));
+        final JTextField yTextField = new JTextField("300");
+        p_options.add(yTextField);
+
+        p_options.add(new JLabel("Number of cells:"));
+        final JTextField numberOfCellsTextField = new JTextField("20");
+        p_options.add(numberOfCellsTextField);
+        p_options.add(new JLabel("Number of inclusions:"));
+        final JTextField numberOfInclusionsTextField = new JTextField("5");
+        p_options.add(numberOfInclusionsTextField);
+        p_options.add(new JLabel("Type of inclusions"));
+        JButton addButton = new JButton("Add");
+
+        addButton.setBounds(25, 0, 20, 20);
+        addButton.addActionListener(ae -> {
+            int cellsToAdd = Integer.parseInt(numberOfCellsTextField.getText());
+            int xSize = Integer.parseInt(xTextField.getText());
+            int ySize = Integer.parseInt(yTextField.getText());
+
+            multiscaleModellingPanel.init(xSize, ySize);
+            for (int i = 0; i < cellsToAdd; i++) {
+                multiscaleModellingPanel.addRandomCell();
+            }
+
+            System.out.println("Cells successfully added");
+            f_options.dispose();
+        });
+        p_options.add(addButton);
+        f_options.setVisible(true);
     }
 
     private void stopSimulation() {
         startSimulationMenuItem.setEnabled(true);
         stopSimulationMenuItem.setEnabled(false);
         resetSimulationMenuItem.setEnabled(true);
+        menuItemFileImport.setEnabled(true);
+        menuItemFileExport.setEnabled(true);
         multiscaleModellingPanel.stopSimulation();
         System.out.println("Simulation stopped");
     }
@@ -123,6 +239,8 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         startSimulationMenuItem.setEnabled(false);
         stopSimulationMenuItem.setEnabled(true);
         resetSimulationMenuItem.setEnabled(false);
+        menuItemFileImport.setEnabled(false);
+        menuItemFileExport.setEnabled(false);
         multiscaleModellingPanel.startSimulation();
         System.out.println("Simulation started");
     }

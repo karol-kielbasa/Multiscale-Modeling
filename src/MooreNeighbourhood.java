@@ -4,18 +4,26 @@ import java.util.Map;
 
 public class MooreNeighbourhood implements Neighbourhood {
 
+    private int xSize;
+    private int ySize;
+
+    public MooreNeighbourhood(int xSize, int ySize) {
+        this.xSize = xSize;
+        this.ySize = ySize;
+    }
+
     @Override
     public void grow(Cell cell, List<Cell> cells) {
         int x = cell.x;
         int y = cell.y;
 
-        cells.get(x * 300 + y).setGrown(true);
+        cells.get(x * ySize + y).setGrown(true);
 
         if (y == 0 && x == 0) {
             countNeighboursColorAndChangeCellState(cells, x + 1, y);
             countNeighboursColorAndChangeCellState(cells, x + 1, y + 1);
             countNeighboursColorAndChangeCellState(cells, x, y + 1);
-        } else if (y == 0 && x == 299) {
+        } else if (y == 0 && x == xSize - 1) {
             countNeighboursColorAndChangeCellState(cells, x - 1, y);
             countNeighboursColorAndChangeCellState(cells, x - 1, y + 1);
             countNeighboursColorAndChangeCellState(cells, x, y + 1);
@@ -25,17 +33,17 @@ public class MooreNeighbourhood implements Neighbourhood {
             countNeighboursColorAndChangeCellState(cells, x, y + 1);
             countNeighboursColorAndChangeCellState(cells, x + 1, y + 1);
             countNeighboursColorAndChangeCellState(cells, x + 1, y);
-        } else if (y == 299 && x != 0 && x != 299) {
+        } else if (y == ySize - 1 && x != 0 && x != xSize - 1) {
             countNeighboursColorAndChangeCellState(cells, x - 1, y);
             countNeighboursColorAndChangeCellState(cells, x - 1, y - 1);
             countNeighboursColorAndChangeCellState(cells, x, y - 1);
             countNeighboursColorAndChangeCellState(cells, x + 1, y - 1);
             countNeighboursColorAndChangeCellState(cells, x + 1, y);
-        } else if (y == 299 && x == 299) {
+        } else if (y == ySize - 1 && x == xSize - 1) {
             countNeighboursColorAndChangeCellState(cells, x, y - 1);
             countNeighboursColorAndChangeCellState(cells, x - 1, y);
             countNeighboursColorAndChangeCellState(cells, x - 1, y - 1);
-        } else if (y == 299 && x == 0) {
+        } else if (y == ySize - 1 && x == 0) {
             countNeighboursColorAndChangeCellState(cells, x + 1, y);
             countNeighboursColorAndChangeCellState(cells, x + 1, y - 1);
             countNeighboursColorAndChangeCellState(cells, x, y - 1);
@@ -71,7 +79,7 @@ public class MooreNeighbourhood implements Neighbourhood {
 
             Cell neighbour5 = getCellByXAndY(cells, x + 1, y + 1);
             countColor(neighboursColors, neighbour5);
-        } else if (y == 0 && x == 299) {
+        } else if (y == 0 && x == xSize - 1) {
             Cell neighbour2 = getCellByXAndY(cells, x - 1, y);
             countColor(neighboursColors, neighbour2);
 
@@ -96,7 +104,7 @@ public class MooreNeighbourhood implements Neighbourhood {
             Cell neighbour7 = getCellByXAndY(cells, x + 1, y);
             countColor(neighboursColors, neighbour7);
 
-        } else if (y == 299 && x != 0 && x != 299) {
+        } else if (y == ySize - 1 && x != 0 && x != xSize - 1) {
             Cell neighbour1 = getCellByXAndY(cells, x + 1, y);
             countColor(neighboursColors, neighbour1);
 
@@ -113,7 +121,7 @@ public class MooreNeighbourhood implements Neighbourhood {
             countColor(neighboursColors, neighbour7);
 
 
-        } else if (y == 299 && x == 299) {
+        } else if (y == ySize - 1 && x == xSize - 1) {
             Cell neighbour4 = getCellByXAndY(cells, x, y - 1);
             countColor(neighboursColors, neighbour4);
 
@@ -123,7 +131,7 @@ public class MooreNeighbourhood implements Neighbourhood {
             Cell neighbour7 = getCellByXAndY(cells, x - 1, y - 1);
             countColor(neighboursColors, neighbour7);
 
-        } else if (y == 299 && x == 0) {
+        } else if (y == ySize - 1 && x == 0) {
             Cell neighbour1 = getCellByXAndY(cells, x + 1, y);
             countColor(neighboursColors, neighbour1);
 
@@ -171,8 +179,8 @@ public class MooreNeighbourhood implements Neighbourhood {
     }
 
     public Cell getCellByXAndY(List<Cell> cells, int x, int y) {
-        int index = x * 300 + y;
-        if (index >= 0 && index < 90000) {
+        int index = x * ySize + y;
+        if (index >= 0 && index < xSize*ySize) {
             Cell cellToGrow = cells.get(index);
             if (cellToGrow != null) {
                 return cellToGrow;

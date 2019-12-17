@@ -1,24 +1,20 @@
 import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ImportExportTxt implements ImportExport {
 
-    private String fileName = "cells.txt";
+    public static final String format = "txt";
 
     @Override
-    public void exportFile(List<Cell> cells) {
+    public void exportFile(List<Cell> cells, File file) {
+        file = validateFormatWhileExporting(file, format);
         System.out.println("Export started");
-        try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
-
-
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             for (Cell cell : cells) {
                 String content = cell.toString();
                 fileOutputStream.write(content.getBytes());
@@ -31,11 +27,12 @@ public class ImportExportTxt implements ImportExport {
     }
 
     @Override
-    public List<Cell> importFile() {
+    public List<Cell> importFile(File file) {
+        file = validateFormatWhileImporting(file, format);
         System.out.println("Import started");
         List<Cell> cells = null;
         try {
-            List<String> list = Files.readAllLines(Paths.get(fileName));
+            List<String> list = Files.readAllLines(file.toPath());
             cells = list.stream()
                 .map(line -> line.split(" "))
                 .map(this::initCell)
@@ -61,7 +58,7 @@ public class ImportExportTxt implements ImportExport {
 
     private void initColorCache(Cell cell) {
         Color color = ColorCache.getColorById(cell.getId());
-        if(color == null){
+        if (color == null) {
             ColorCache.addIdToCacheMap(cell.getId());
         }
     }
