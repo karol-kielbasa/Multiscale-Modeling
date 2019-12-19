@@ -68,7 +68,6 @@ public class ImportExportBmp implements ImportExport {
     private Cell initCell(BufferedImage bi, int x, int y, int i, int j) {
         Cell cell = new Cell(y, x);
         cell.setId(bi.getRGB(i, j));
-        cell.setGrown(true);
         cell.setGrowing(true);
         return cell;
     }

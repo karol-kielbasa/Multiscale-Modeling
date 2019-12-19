@@ -8,7 +8,7 @@ public interface Neighbourhood {
     void countNeighboursColorAndChangeCellState(List<Cell> cells, int x, int y);
 
     default void countColor(HashMap<Integer, Integer> neighboursColors, Cell neighbour) {
-        if(neighbour == null) {
+        if(neighbour == null || neighbour.getId() == -2) {
             return;
         }
         if (neighbour.getId() != -1) {

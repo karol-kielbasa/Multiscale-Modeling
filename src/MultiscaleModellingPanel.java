@@ -8,16 +8,17 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
 
     private Cells cells;
 
-    private Thread simulation;
+    private Thread simulation = new Thread(this);;
 
     private Neighbourhood neighbourhood;
 
     private volatile boolean stop = true;
+    private boolean allGrown;
 
     public MultiscaleModellingPanel() {
     }
 
-    public void init(int x, int y){
+    public void init(int x, int y) {
         cells = new Cells(x, y);
         neighbourhood = new MooreNeighbourhood(x, y);
     }
@@ -29,12 +30,11 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     }
 
     private void drawCells(Graphics g) {
-        if(cells == null){
+        if (cells == null) {
             return;
         }
-
         cells.getCells().stream()
-            .filter(Cell::isGrowing)
+            .filter(cell -> cell.isGrowing() || cell.isDead())
             .forEach(cell -> drawCell(cell, g));
     }
 
@@ -51,19 +51,26 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
             List<Cell> nextIterationCells = cells.copyCells();
 
             currentCells.stream()
-                .filter(cell -> cell.isGrowing() && !cell.isGrown())
+                .filter(cell -> cell.isGrowing() && !cell.isDead())
                 .forEach(cell -> neighbourhood.grow(cell, nextIterationCells));
 
             currentCells.clear();
             currentCells.addAll(nextIterationCells);
             repaint();
-
             try {
+                checkIfFinished();
                 Thread.sleep(100);
             } catch (InterruptedException ignore) {
             }
         }
 
+    }
+
+    private void checkIfFinished() {
+        allGrown = cells.getCells().stream().allMatch(cell -> cell.getId() != -1);
+        if (allGrown) {
+            stopSimulation();
+        }
     }
 
     public List<Cell> getCells() {
@@ -83,10 +90,11 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     public void resetSimulation() {
         stop = true;
         cells.resetCells();
+        simulation.interrupt();
     }
 
     public void startSimulation() {
-        simulation = new Thread(this);
+
         simulation.start();
         stop = false;
     }
@@ -94,5 +102,16 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     public void stopSimulation() {
         stop = true;
         simulation.interrupt();
+        System.out.println("Simulation stopped");
+    }
+
+    public void addRandomInclusion(String type, int inclusionSize) {
+        checkIfFinished();
+        if (allGrown) {
+            cells.addInclusion(type, inclusionSize);
+        } else {
+            cells.addRandomInclusion(type, inclusionSize);
+        }
+        repaint();
     }
 }

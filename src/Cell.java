@@ -5,13 +5,12 @@ public class Cell extends Point {
     private int id;
 
     private boolean growing;
-    private boolean grown;
+    private boolean dead;
 
     public Cell(int x, int y) {
         super(x, y);
         this.id = -1;
         this.growing = false;
-        this.grown = false;
     }
 
     public int getId() {
@@ -30,16 +29,16 @@ public class Cell extends Point {
         this.growing = growing;
     }
 
-    public boolean isGrown() {
-        return grown;
+    public boolean isDead() {
+        return dead;
     }
 
-    public void setGrown(boolean grown) {
-        this.grown = grown;
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 
     @Override
     public String toString() {
-        return x + " " + y + " " + id + " " + growing + " " + grown;
+        return x + " " + y + " " + id + " " + growing + " " + dead;
     }
 }

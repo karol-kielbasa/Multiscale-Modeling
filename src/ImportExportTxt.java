@@ -50,7 +50,7 @@ public class ImportExportTxt implements ImportExport {
         cell.setId(Integer.parseInt(line[2]));
 
         cell.setGrowing(Boolean.parseBoolean(line[3]));
-        cell.setGrown(Boolean.parseBoolean((line[4])));
+        cell.setDead(Boolean.parseBoolean((line[4])));
 
         initColorCache(cell);
         return cell;
