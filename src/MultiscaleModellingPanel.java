@@ -8,7 +8,7 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
 
     private Cells cells;
 
-    private Thread simulation = new Thread(this);;
+    private Thread simulation;
 
     private Neighbourhood neighbourhood;
 
@@ -18,9 +18,10 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     public MultiscaleModellingPanel() {
     }
 
-    public void init(int x, int y) {
+    public void init(int x, int y, int percentage) {
         cells = new Cells(x, y);
-        neighbourhood = new MooreNeighbourhood(x, y);
+        neighbourhood = new MooreNeighbourhood(x, y,percentage);
+        simulation = new Thread(this);
     }
 
     @Override
@@ -89,12 +90,12 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
 
     public void resetSimulation() {
         stop = true;
+        allGrown = false;
         cells.resetCells();
         simulation.interrupt();
     }
 
     public void startSimulation() {
-
         simulation.start();
         stop = false;
     }

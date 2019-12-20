@@ -18,7 +18,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     private JMenuBar menuBar;
     private JMenu menuFile, menuSimulation;
     private JMenuItem menuItemFileImport, menuItemFileExport, exitMenuItem, addRandomCellMenuItem,
-        addRandomInclusionMenuItem;
+        addRandomInclusionMenuItem, initMenuItem;
     private JMenuItem startSimulationMenuItem, resetSimulationMenuItem;
     private JFileChooser fileChooser = new JFileChooser();
 
@@ -56,8 +56,11 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         resetSimulationMenuItem.addActionListener(this);
         addRandomCellMenuItem = new JMenuItem("Add Random Cell");
         addRandomCellMenuItem.addActionListener(this);
+        initMenuItem = new JMenuItem("Init Cell");
+        initMenuItem.addActionListener(this);
         addRandomInclusionMenuItem = new JMenuItem("Add Random Inclusion");
         addRandomInclusionMenuItem.addActionListener(this);
+        menuSimulation.add(initMenuItem);
         menuSimulation.add(addRandomCellMenuItem);
         menuSimulation.add(addRandomInclusionMenuItem);
         menuSimulation.add(new JSeparator());
@@ -94,6 +97,8 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
             addCells();
         } else if (ae.getSource().equals(addRandomInclusionMenuItem)) {
             addInclussions();
+        } else if (ae.getSource().equals(initMenuItem)) {
+            initCells();
         } else if (ae.getSource().equals(menuItemFileImport)) {
             importFile();
         } else if (ae.getSource().equals(menuItemFileExport)) {
@@ -101,10 +106,10 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         }
     }
 
-    private void addInclussions() {
+    private void initCells() {
         final JFrame f_options = new JFrame();
-        f_options.setTitle("Add cells");
-        f_options.setSize(300, 150);
+        f_options.setTitle("Init cells");
+        f_options.setSize(300, 60);
         f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
             (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
         f_options.setResizable(false);
@@ -112,18 +117,51 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         JPanel p_options = new JPanel();
         p_options.setOpaque(false);
         f_options.add(p_options);
-        p_options.add(new JLabel("Number of inclusions:"));
-        final JTextField numberOfInclusionsTextField = new JTextField("5");
+        p_options.add(new JLabel("X:"));
+        final JTextField xTextField = new JTextField("300");
+        p_options.add(xTextField);
+        p_options.add(new JLabel("Y:"));
+        final JTextField yTextField = new JTextField("300");
+        p_options.add(yTextField);
+        p_options.add(new JLabel("Y:"));
+        final JTextField percetage = new JTextField("10");
+        p_options.add(percetage);
+        JButton addButton = new JButton("Init");
+        addButton.setBounds(25, 0, 20, 20);
+        addButton.addActionListener(ae -> {
+            int xSize = Integer.parseInt(xTextField.getText());
+            int ySize = Integer.parseInt(yTextField.getText());
+            int percentage = Integer.parseInt(percetage.getText());
+            multiscaleModellingPanel.init(xSize, ySize, percentage);
+            System.out.println("Cells successfully init");
+            f_options.dispose();
+        });
+        p_options.add(addButton);
+        f_options.setVisible(true);
+    }
+
+    private void addInclussions() {
+        final JFrame f_options = new JFrame();
+        f_options.setTitle("Add inclusions");
+        f_options.setSize(300, 125);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        f_options.setAlwaysOnTop(true);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("Number of inclusions:    "));
+        final JTextField numberOfInclusionsTextField = new JTextField("10");
         p_options.add(numberOfInclusionsTextField);
         p_options.add(new JLabel("Size of inclusions:"));
-        final JTextField sizeOfInclusionsTextField = new JTextField("1");
+        final JTextField sizeOfInclusionsTextField = new JTextField("10");
         p_options.add(sizeOfInclusionsTextField);
         p_options.add(new JLabel("Type of inclusions"));
         final JComboBox cb_seconds = new JComboBox(incusionTypes);
         cb_seconds.setSelectedItem(incusionTypes[0]);
         p_options.add(cb_seconds);
         JButton addButton = new JButton("Add");
-
         addButton.setBounds(25, 0, 20, 20);
         addButton.addActionListener(ae -> {
             int inclusionsToAdd = Integer.parseInt(numberOfInclusionsTextField.getText());
@@ -132,7 +170,6 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
             for (int i = 0; i < inclusionsToAdd; i++) {
                 multiscaleModellingPanel.addRandomInclusion(selected, inclusionSize);
             }
-
             System.out.println("Inclusions successfully added");
             f_options.dispose();
         });
@@ -142,7 +179,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
 
     private void importFile() {
         final JFrame f_options = new JFrame();
-        f_options.setTitle("Options");
+        f_options.setTitle("Import");
         f_options.setSize(300, 60);
         f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
             (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
@@ -180,7 +217,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
 
     private void exportFile() {
         final JFrame f_options = new JFrame();
-        f_options.setTitle("Options");
+        f_options.setTitle("Export");
         f_options.setSize(300, 60);
         f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
             (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
@@ -190,7 +227,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         f_options.add(p_options);
         p_options.add(new JLabel("Format"));
 
-        JButton importButton = new JButton("Import");
+        JButton importButton = new JButton("Export");
         final JComboBox cb_seconds = new JComboBox(importExportFormats);
         p_options.add(cb_seconds);
         cb_seconds.setSelectedItem(importExportFormats[0]);
@@ -219,7 +256,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     private void addCells() {
         final JFrame f_options = new JFrame();
         f_options.setTitle("Add cells");
-        f_options.setSize(300, 150);
+        f_options.setSize(300, 60);
         f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
             (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
         f_options.setResizable(false);
@@ -227,24 +264,13 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         JPanel p_options = new JPanel();
         p_options.setOpaque(false);
         f_options.add(p_options);
-        p_options.add(new JLabel("X:"));
-        final JTextField xTextField = new JTextField("300");
-        p_options.add(xTextField);
-        p_options.add(new JLabel("Y:"));
-        final JTextField yTextField = new JTextField("300");
-        p_options.add(yTextField);
-
         p_options.add(new JLabel("Number of cells:"));
         final JTextField numberOfCellsTextField = new JTextField("20");
         p_options.add(numberOfCellsTextField);
         JButton addButton = new JButton("Add");
-
         addButton.setBounds(25, 0, 20, 20);
         addButton.addActionListener(ae -> {
             int cellsToAdd = Integer.parseInt(numberOfCellsTextField.getText());
-            int xSize = Integer.parseInt(xTextField.getText());
-            int ySize = Integer.parseInt(yTextField.getText());
-                multiscaleModellingPanel.init(xSize, ySize);
             for (int i = 0; i < cellsToAdd; i++) {
                 multiscaleModellingPanel.addRandomCell();
             }
