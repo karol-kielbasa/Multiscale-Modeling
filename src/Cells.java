@@ -42,7 +42,19 @@ public class Cells {
         int j = generator.nextInt(ySize);
 
         Cell cell = cells.get(i * ySize + j);
-        if(cell.getId() == -2) {
+        if(cell.getId() != -1){
+            boolean found = false;
+            while(!found){
+                i = generator.nextInt(xSize);
+                j = generator.nextInt(ySize);
+                cell = cells.get(i * ySize + j);
+                if (cell.getId() == -1) {
+                    found = true;
+                }
+            }
+        }
+
+        if (cell.getId() == -2) {
             System.out.println("Cell not added at x: " + i + " y: " + j + " reason: is inclusion");
             return;
         }
@@ -83,7 +95,7 @@ public class Cells {
         int y = generator.nextInt(ySize);
 
         Cell cell = cells.get(x * ySize + y);
-        if(cell.getId() == -2){
+        if (cell.getId() == -2) {
             return;
         }
         if (inclusionSize == 1) {
@@ -106,7 +118,7 @@ public class Cells {
     private void drawCircle(int inclusionSize, int x, int y) {
         int r = inclusionSize;
         while (r > 0) {
-            for (int i = 0; i < 360; i++) {
+            for (double i = 0; i < 360; i = i + 0.2) {
                 double x1 = r * Math.cos(i * 3.14 / 180);
                 double y1 = r * Math.sin(i * 3.14 / 180);
                 initInclusion((int) Math.round(x + x1), (int) Math.round(y + y1));
@@ -125,8 +137,8 @@ public class Cells {
     }
 
     private Cell initInclusion(int x, int y) {
-        Cell cell = cells.get(x * ySize + y);
-        if(cell == null) return null;
+        Cell cell = getCellByXAndY(cells, x, y);
+        if (cell == null || cell.getId() == -2) return null;
         cell.setId(-2);
         cell.setDead(true);
         System.out.println("Inclusion added at x: " + x + " y: " + y);
@@ -154,7 +166,6 @@ public class Cells {
         }
 
         chooseType(type, inclusionSize, x, y);
-
     }
 
     public Cell getCellByXAndY(List<Cell> cells, int x, int y) {

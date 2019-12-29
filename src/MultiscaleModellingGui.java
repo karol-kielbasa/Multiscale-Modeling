@@ -109,7 +109,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     private void initCells() {
         final JFrame f_options = new JFrame();
         f_options.setTitle("Init cells");
-        f_options.setSize(300, 60);
+        f_options.setSize(400, 60);
         f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
             (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
         f_options.setResizable(false);
@@ -123,7 +123,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         p_options.add(new JLabel("Y:"));
         final JTextField yTextField = new JTextField("300");
         p_options.add(yTextField);
-        p_options.add(new JLabel("Y:"));
+        p_options.add(new JLabel("Percentage:"));
         final JTextField percetage = new JTextField("10");
         p_options.add(percetage);
         JButton addButton = new JButton("Init");
@@ -143,7 +143,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     private void addInclussions() {
         final JFrame f_options = new JFrame();
         f_options.setTitle("Add inclusions");
-        f_options.setSize(300, 125);
+        f_options.setSize(500, 100);
         f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
             (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
         f_options.setResizable(false);
@@ -151,13 +151,13 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         JPanel p_options = new JPanel();
         p_options.setOpaque(false);
         f_options.add(p_options);
-        p_options.add(new JLabel("Number of inclusions:    "));
+        p_options.add(new JLabel("Number of inclusions:"));
         final JTextField numberOfInclusionsTextField = new JTextField("10");
         p_options.add(numberOfInclusionsTextField);
         p_options.add(new JLabel("Size of inclusions:"));
         final JTextField sizeOfInclusionsTextField = new JTextField("10");
         p_options.add(sizeOfInclusionsTextField);
-        p_options.add(new JLabel("Type of inclusions"));
+        p_options.add(new JLabel("Type:"));
         final JComboBox cb_seconds = new JComboBox(incusionTypes);
         cb_seconds.setSelectedItem(incusionTypes[0]);
         p_options.add(cb_seconds);

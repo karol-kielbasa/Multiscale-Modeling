@@ -18,8 +18,8 @@ public class ImportExportBmp implements ImportExport {
         Graphics g = bi.createGraphics();
         cells.forEach(cell -> {
             g.setColor(ColorCache.getColorById(cell.getId()));
-            g.fillRect(MultiscaleModellingPanel.BLOCK_SIZE + (MultiscaleModellingPanel.BLOCK_SIZE * cell.x),
-                MultiscaleModellingPanel.BLOCK_SIZE + (MultiscaleModellingPanel.BLOCK_SIZE * cell.y),
+            g.fillRect((MultiscaleModellingPanel.BLOCK_SIZE * cell.x),
+                (MultiscaleModellingPanel.BLOCK_SIZE * cell.y),
                 MultiscaleModellingPanel.BLOCK_SIZE, MultiscaleModellingPanel.BLOCK_SIZE);
         });
         g.dispose();
@@ -50,9 +50,9 @@ public class ImportExportBmp implements ImportExport {
     private List<Cell> initCellsFromBmpImage(BufferedImage bi) {
         List<Cell> cells = new ArrayList<>();
         int x = 0, y = 0;
-        for (int i = MultiscaleModellingPanel.BLOCK_SIZE; i < bi.getHeight();
+        for (int i = 0; i < bi.getHeight();
              i = i + MultiscaleModellingPanel.BLOCK_SIZE) {
-            for (int j = MultiscaleModellingPanel.BLOCK_SIZE; j < bi.getWidth();
+            for (int j = 0; j < bi.getWidth();
                  j = j + MultiscaleModellingPanel.BLOCK_SIZE) {
                 Cell cell = initCell(bi, x, y, i, j);
                 initColorCache(cell);
