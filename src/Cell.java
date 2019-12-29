@@ -13,6 +13,12 @@ public class Cell extends Point {
         this.growing = false;
     }
 
+    public void reset(){
+        this.id = -1;
+        this.growing = false;
+        this.dead = false;
+    }
+
     public int getId() {
         return id;
     }

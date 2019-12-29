@@ -1,8 +1,10 @@
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
 import javax.swing.*;
 
-public class MultiscaleModellingPanel extends JPanel implements Runnable {
+public class MultiscaleModellingPanel extends JPanel implements Runnable, MouseListener {
 
     public static final int BLOCK_SIZE = 2;
 
@@ -16,12 +18,13 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     private boolean allGrown;
 
     public MultiscaleModellingPanel() {
+        addMouseListener(this);
     }
 
     public void init(int x, int y, int percentage) {
         cells = new Cells(x, y);
-        neighbourhood = new MooreNeighbourhood(x, y,percentage);
-        simulation = new Thread(this);
+        neighbourhood = new MooreNeighbourhood(x, y, percentage);
+//        simulation = new Thread(this);
     }
 
     @Override
@@ -96,6 +99,7 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
     }
 
     public void startSimulation() {
+        simulation = new Thread(this);
         simulation.start();
         stop = false;
     }
@@ -114,5 +118,36 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable {
             cells.addRandomInclusion(type, inclusionSize);
         }
         repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        int x = e.getPoint().x / MultiscaleModellingPanel.BLOCK_SIZE - 1;
+        int y = e.getPoint().y / MultiscaleModellingPanel.BLOCK_SIZE - 1;
+        Cell c = cells.getCellByXAndY(cells.getCells(), x, y);
+        cells.saveCellId(c.getId());
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    public void resetWithSelected(String selected) {
+        allGrown = false;
+        cells.resetWithSelectedCells(selected);
     }
 }

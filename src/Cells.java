@@ -7,8 +7,10 @@ public class Cells {
 
     public static final String CIRCLE = "circle";
     public static final String SQUARE = "square";
-
+    public static final String DUAL = "dual" ;
+    public static final String SUB = "sub";
     private static int uniqueIndex = 0;
+    private List<Integer> savedCells = new ArrayList<>();
     private List<Cell> cells;
 
     private int xSize;
@@ -42,9 +44,9 @@ public class Cells {
         int j = generator.nextInt(ySize);
 
         Cell cell = cells.get(i * ySize + j);
-        if(cell.getId() != -1){
+        if (cell.getId() != -1) {
             boolean found = false;
-            while(!found){
+            while (!found) {
                 i = generator.nextInt(xSize);
                 j = generator.nextInt(ySize);
                 cell = cells.get(i * ySize + j);
@@ -80,6 +82,7 @@ public class Cells {
         cells.clear();
         uniqueIndex = 0;
         cells = initCells();
+        clearSavedCellsId();
     }
 
     public List<Cell> getCells() {
@@ -177,5 +180,28 @@ public class Cells {
             }
         }
         return null;
+    }
+
+    public void saveCellId(Integer id) {
+        savedCells.add(id);
+    }
+
+    public void clearSavedCellsId() {
+        savedCells.clear();
+    }
+
+    public void resetWithSelectedCells(String selected) {
+        cells.forEach(cell -> {
+            if (savedCells.contains(cell.getId())) {
+                cell.setDead(true);
+                cell.setGrowing(true);
+                if(DUAL.equals(selected)){
+                    cell.setId(-3);
+                }
+            } else {
+                cell.reset();
+            }
+        });
+
     }
 }

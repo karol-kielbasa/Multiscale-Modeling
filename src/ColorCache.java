@@ -6,11 +6,14 @@ public class ColorCache {
 
     private static Map<Integer, Color> map = new HashMap<Integer, Color>() {{
         put(-2, Color.BLACK);
+        put(-3, Color.MAGENTA);
+
     }};
 
     public static void resetCacheMap() {
         map.clear();
         map.put(-2, Color.BLACK);
+        map.put(-3, Color.MAGENTA);
     }
 
     public static void addIdToCacheMap(int id) {

@@ -14,12 +14,13 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
 
     private static final String[] importExportFormats = {ImportExportTxt.format, ImportExportBmp.format};
     private static final String[] incusionTypes = {Cells.CIRCLE, Cells.SQUARE};
+    private static final String[] substructure = {Cells.DUAL, Cells.SUB};
 
     private JMenuBar menuBar;
     private JMenu menuFile, menuSimulation;
     private JMenuItem menuItemFileImport, menuItemFileExport, exitMenuItem, addRandomCellMenuItem,
         addRandomInclusionMenuItem, initMenuItem;
-    private JMenuItem startSimulationMenuItem, resetSimulationMenuItem;
+    private JMenuItem startSimulationMenuItem, resetSimulationMenuItem,resetWithSelectedMenuItem;
     private JFileChooser fileChooser = new JFileChooser();
 
     private MultiscaleModellingPanel multiscaleModellingPanel;
@@ -54,6 +55,8 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         startSimulationMenuItem.addActionListener(this);
         resetSimulationMenuItem = new JMenuItem("Reset");
         resetSimulationMenuItem.addActionListener(this);
+        resetWithSelectedMenuItem = new JMenuItem("Reset with selected");
+        resetWithSelectedMenuItem.addActionListener(this);
         addRandomCellMenuItem = new JMenuItem("Add Random Cell");
         addRandomCellMenuItem.addActionListener(this);
         initMenuItem = new JMenuItem("Init Cell");
@@ -66,9 +69,9 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         menuSimulation.add(new JSeparator());
         menuSimulation.add(startSimulationMenuItem);
         menuSimulation.add(resetSimulationMenuItem);
+        menuSimulation.add(resetWithSelectedMenuItem);
         multiscaleModellingPanel = new MultiscaleModellingPanel();
         add(multiscaleModellingPanel);
-
         System.out.println("GUI initialized successfully");
     }
 
@@ -91,6 +94,8 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
             System.exit(0);
         } else if (ae.getSource().equals(resetSimulationMenuItem)) {
             resetSimulation();
+        } else if (ae.getSource().equals(resetWithSelectedMenuItem)) {
+            resetWithSelected();
         } else if (ae.getSource().equals(startSimulationMenuItem)) {
             startSimulation();
         } else if (ae.getSource().equals(addRandomCellMenuItem)) {
@@ -105,6 +110,8 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
             exportFile();
         }
     }
+
+
 
     private void initCells() {
         final JFrame f_options = new JFrame();
@@ -290,6 +297,32 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         multiscaleModellingPanel.resetSimulation();
         multiscaleModellingPanel.repaint();
         System.out.println("Simulation reset");
+    }
+
+    private void resetWithSelected() {
+        final JFrame f_options = new JFrame();
+        f_options.setSize(500, 100);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        f_options.setAlwaysOnTop(true);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("Type:"));
+        final JComboBox cb_seconds = new JComboBox(substructure);
+        cb_seconds.setSelectedItem(substructure[0]);
+        p_options.add(cb_seconds);
+        JButton addButton = new JButton("Add");
+        addButton.setBounds(25, 0, 20, 20);
+        addButton.addActionListener(ae -> {
+            String selected = (String) cb_seconds.getSelectedItem();
+            multiscaleModellingPanel.resetWithSelected(selected);
+            multiscaleModellingPanel.repaint();
+            f_options.dispose();
+        });
+        p_options.add(addButton);
+        f_options.setVisible(true);
     }
 
 }
