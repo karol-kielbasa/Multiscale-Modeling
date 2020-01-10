@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 
 public class Cells {
 
-    public static final String CIRCLE = "circle";
-    public static final String SQUARE = "square";
-    public static final String DUAL = "dual" ;
-    public static final String SUB = "sub";
+    public static final String CIRCLE = "Circle";
+    public static final String SQUARE = "Square";
+    public static final String DUAL = "Dual phase";
+    public static final String SUB = "Substructure";
     private static int uniqueIndex = 0;
     private List<Integer> savedCells = new ArrayList<>();
     private List<Cell> cells;
@@ -195,7 +195,7 @@ public class Cells {
             if (savedCells.contains(cell.getId())) {
                 cell.setDead(true);
                 cell.setGrowing(true);
-                if(DUAL.equals(selected)){
+                if (DUAL.equals(selected)) {
                     cell.setId(-3);
                 }
             } else {
@@ -203,5 +203,94 @@ public class Cells {
             }
         });
 
+    }
+
+    public void colorBoundaries(int gbSize) {
+        cells.forEach(cell -> {
+            Cell neighbourCell = getCellByXAndY(cells, cell.x + 1, cell.y);
+            if (neighbourCell == null) {
+                return;
+            }
+            if (neighbourCell.getId() != cell.getId() && !neighbourCell.isDead() && !cell.isDead()) {
+                drawSquare(gbSize, cell.x, cell.y);
+            }
+            neighbourCell = getCellByXAndY(cells, cell.x, cell.y - 1);
+            if (neighbourCell == null) {
+                return;
+            }
+            if (neighbourCell.getId() != cell.getId() && !neighbourCell.isDead() && !cell.isDead()) {
+                if (cell.y != 0) {
+                    drawSquare(gbSize, cell.x, cell.y);
+                }
+            }
+        });
+
+    }
+
+    public void colorSelectedBoundaries(int gbSize) {
+        cells.forEach(cell -> {
+            if (savedCells.contains(cell.getId())) {
+                Cell neighbourCell = getCellByXAndY(cells, cell.x + 1, cell.y);
+                if (neighbourCell == null) {
+                    return;
+                }
+                if (neighbourCell.getId() != cell.getId() && !neighbourCell.isDead() && !cell.isDead()) {
+                    drawSquare(gbSize, cell.x, cell.y);
+                }
+                neighbourCell = getCellByXAndY(cells, cell.x, cell.y - 1);
+                if (neighbourCell == null) {
+                    return;
+                }
+                if (neighbourCell.getId() != cell.getId() && !neighbourCell.isDead() && !cell.isDead()) {
+                    if (cell.y != 0 && cell.y != ySize - 1) {
+                        drawSquare(gbSize, cell.x, cell.y);
+                    }
+                }
+
+                neighbourCell = getCellByXAndY(cells, cell.x, cell.y + 1);
+                if (neighbourCell == null) {
+                    return;
+                }
+                if (neighbourCell.getId() != cell.getId() && !neighbourCell.isDead() && !cell.isDead()) {
+                    if (cell.y != 0 && cell.y != ySize - 1) {
+                        drawSquare(gbSize, cell.x, cell.y);
+                    }
+                }
+                neighbourCell = getCellByXAndY(cells, cell.x - 1, cell.y);
+                if (neighbourCell == null) {
+                    return;
+                }
+                if (neighbourCell.getId() != cell.getId() && !neighbourCell.isDead() && !cell.isDead()) {
+                    if (cell.y != 0) {
+                        drawSquare(gbSize, cell.x, cell.y);
+                    }
+                }
+            }
+        });
+    }
+
+    public void clearWithBoundaries() {
+        cells.forEach(cell -> {
+            if (savedCells.contains(cell.getId()) || cell.getId() == -2) {
+                if(!cell.isDead()){
+                    cell.setId(-4);
+                    cell.setDead(true);
+                }
+            } else {
+                cell.reset();
+            }
+        });
+    }
+
+    public void clearWithAllBoundaries() {
+        cells.forEach(cell -> {
+            if (cell.getId() == -2) {
+                if(!cell.isDead()){
+                    cell.setId(-4);
+                }
+            } else {
+                cell.reset();
+            }
+        });
     }
 }

@@ -24,7 +24,7 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable, MouseL
     public void init(int x, int y, int percentage) {
         cells = new Cells(x, y);
         neighbourhood = new MooreNeighbourhood(x, y, percentage);
-//        simulation = new Thread(this);
+        simulation = new Thread(this);
     }
 
     @Override
@@ -95,7 +95,6 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable, MouseL
         stop = true;
         allGrown = false;
         cells.resetCells();
-        simulation.interrupt();
     }
 
     public void startSimulation() {
@@ -149,5 +148,21 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable, MouseL
     public void resetWithSelected(String selected) {
         allGrown = false;
         cells.resetWithSelectedCells(selected);
+    }
+
+    public void colorBounaries(int cellsToAdd) {
+        cells.colorBoundaries(cellsToAdd);
+    }
+
+    public void colorSelectedBounaries(int cellsToAdd) {
+        cells.colorSelectedBoundaries(cellsToAdd);
+    }
+
+    public void clearWithBoundaries() {
+        cells.clearWithBoundaries();
+    }
+
+    public void clearWithAllBoundaries() {
+        cells.clearWithAllBoundaries();
     }
 }

@@ -20,7 +20,9 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     private JMenu menuFile, menuSimulation;
     private JMenuItem menuItemFileImport, menuItemFileExport, exitMenuItem, addRandomCellMenuItem,
         addRandomInclusionMenuItem, initMenuItem;
-    private JMenuItem startSimulationMenuItem, resetSimulationMenuItem,resetWithSelectedMenuItem;
+    private JMenuItem startSimulationMenuItem, resetSimulationMenuItem, resetWithSelectedMenuItem,
+        boundaryColorMenuItem, boundaryColorSelectedMenuItem, clearWithSelectedBoundariesMenuItem,
+        clearWithAllBoundariesMenuItem;
     private JFileChooser fileChooser = new JFileChooser();
 
     private MultiscaleModellingPanel multiscaleModellingPanel;
@@ -57,6 +59,14 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         resetSimulationMenuItem.addActionListener(this);
         resetWithSelectedMenuItem = new JMenuItem("Reset with selected");
         resetWithSelectedMenuItem.addActionListener(this);
+        boundaryColorMenuItem = new JMenuItem("Color all boundaries");
+        boundaryColorMenuItem.addActionListener(this);
+        clearWithSelectedBoundariesMenuItem = new JMenuItem("Clear with selected boundaries");
+        clearWithSelectedBoundariesMenuItem.addActionListener(this);
+        clearWithAllBoundariesMenuItem = new JMenuItem("Clear with all boundaries");
+        clearWithAllBoundariesMenuItem.addActionListener(this);
+        boundaryColorSelectedMenuItem = new JMenuItem("Color selected boundaries");
+        boundaryColorSelectedMenuItem.addActionListener(this);
         addRandomCellMenuItem = new JMenuItem("Add Random Cell");
         addRandomCellMenuItem.addActionListener(this);
         initMenuItem = new JMenuItem("Init Cell");
@@ -66,6 +76,11 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         menuSimulation.add(initMenuItem);
         menuSimulation.add(addRandomCellMenuItem);
         menuSimulation.add(addRandomInclusionMenuItem);
+        menuSimulation.add(new JSeparator());
+        menuSimulation.add(boundaryColorMenuItem);
+        menuSimulation.add(boundaryColorSelectedMenuItem);
+        menuSimulation.add(clearWithAllBoundariesMenuItem);
+        menuSimulation.add(clearWithSelectedBoundariesMenuItem);
         menuSimulation.add(new JSeparator());
         menuSimulation.add(startSimulationMenuItem);
         menuSimulation.add(resetSimulationMenuItem);
@@ -96,6 +111,14 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
             resetSimulation();
         } else if (ae.getSource().equals(resetWithSelectedMenuItem)) {
             resetWithSelected();
+        } else if (ae.getSource().equals(boundaryColorMenuItem)) {
+            colorBoundaries();
+        } else if (ae.getSource().equals(clearWithAllBoundariesMenuItem)) {
+            clearAllWithBoundaries();
+        } else if (ae.getSource().equals(boundaryColorSelectedMenuItem)) {
+            colorSelectedBoundaries();
+        } else if (ae.getSource().equals(clearWithSelectedBoundariesMenuItem)) {
+            clearWithBoundaries();
         } else if (ae.getSource().equals(startSimulationMenuItem)) {
             startSimulation();
         } else if (ae.getSource().equals(addRandomCellMenuItem)) {
@@ -111,7 +134,15 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         }
     }
 
+    private void clearAllWithBoundaries() {
+        multiscaleModellingPanel.clearWithAllBoundaries();
+        multiscaleModellingPanel.repaint();
+    }
 
+    private void clearWithBoundaries() {
+        multiscaleModellingPanel.clearWithBoundaries();
+        multiscaleModellingPanel.repaint();
+    }
 
     private void initCells() {
         final JFrame f_options = new JFrame();
@@ -320,6 +351,57 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
             multiscaleModellingPanel.resetWithSelected(selected);
             multiscaleModellingPanel.repaint();
             f_options.dispose();
+        });
+        p_options.add(addButton);
+        f_options.setVisible(true);
+    }
+
+    private void colorBoundaries() {
+        final JFrame f_options = new JFrame();
+        f_options.setTitle("Color boundaries");
+        f_options.setSize(300, 60);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        f_options.setAlwaysOnTop(true);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("GB size:"));
+        final JTextField gbSizeNumber = new JTextField("1");
+        p_options.add(gbSizeNumber);
+        JButton addButton = new JButton("Add");
+        addButton.setBounds(25, 0, 20, 20);
+        addButton.addActionListener(ae -> {
+            int cellsToAdd = Integer.parseInt(gbSizeNumber.getText());
+            multiscaleModellingPanel.colorBounaries(cellsToAdd);
+            multiscaleModellingPanel.repaint();
+        });
+        p_options.add(addButton);
+        f_options.setVisible(true);
+
+    }
+
+    private void colorSelectedBoundaries() {
+        final JFrame f_options = new JFrame();
+        f_options.setTitle("Color selected boundaries");
+        f_options.setSize(300, 60);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        f_options.setAlwaysOnTop(true);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("GB size:"));
+        final JTextField gbSizeNumber = new JTextField("1");
+        p_options.add(gbSizeNumber);
+        JButton addButton = new JButton("Add");
+        addButton.setBounds(25, 0, 20, 20);
+        addButton.addActionListener(ae -> {
+            int cellsToAdd = Integer.parseInt(gbSizeNumber.getText());
+            multiscaleModellingPanel.colorSelectedBounaries(cellsToAdd);
+            multiscaleModellingPanel.repaint();
         });
         p_options.add(addButton);
         f_options.setVisible(true);
