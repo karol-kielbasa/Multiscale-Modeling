@@ -2,7 +2,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.math.BigDecimal;
 import javax.swing.*;
+
 
 public class MultiscaleModellingGui extends JFrame implements ActionListener {
 
@@ -140,8 +142,24 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     }
 
     private void clearWithBoundaries() {
-        multiscaleModellingPanel.clearWithBoundaries();
-        multiscaleModellingPanel.repaint();
+        final JFrame f_options = new JFrame();
+        f_options.setTitle("Clear");
+        f_options.setSize(500, 100);
+        f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
+            (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
+        f_options.setResizable(false);
+        f_options.setAlwaysOnTop(true);
+        JPanel p_options = new JPanel();
+        p_options.setOpaque(false);
+        f_options.add(p_options);
+        p_options.add(new JLabel("Number of inclusions:"));
+        JButton addButton = new JButton("Clear");
+        addButton.setBounds(25, 0, 20, 20);
+        addButton.addActionListener(ae -> {
+
+        });
+        p_options.add(addButton);
+        f_options.setVisible(true);
     }
 
     private void initCells() {
@@ -374,8 +392,10 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         addButton.setBounds(25, 0, 20, 20);
         addButton.addActionListener(ae -> {
             int cellsToAdd = Integer.parseInt(gbSizeNumber.getText());
-            multiscaleModellingPanel.colorBounaries(cellsToAdd);
+            double percentage = multiscaleModellingPanel.colorBounaries(cellsToAdd);
+            p_options.add(new JLabel("Number of inclusions:" + percentage));
             multiscaleModellingPanel.repaint();
+
         });
         p_options.add(addButton);
         f_options.setVisible(true);
@@ -385,7 +405,7 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
     private void colorSelectedBoundaries() {
         final JFrame f_options = new JFrame();
         f_options.setTitle("Color selected boundaries");
-        f_options.setSize(300, 60);
+        f_options.setSize(300, 100);
         f_options.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - f_options.getWidth()) / 2,
             (Toolkit.getDefaultToolkit().getScreenSize().height - f_options.getHeight()) / 2);
         f_options.setResizable(false);
@@ -396,11 +416,15 @@ public class MultiscaleModellingGui extends JFrame implements ActionListener {
         p_options.add(new JLabel("GB size:"));
         final JTextField gbSizeNumber = new JTextField("1");
         p_options.add(gbSizeNumber);
+        JLabel label = new JLabel("Percentage:");
+        p_options.add(label);
         JButton addButton = new JButton("Add");
         addButton.setBounds(25, 0, 20, 20);
         addButton.addActionListener(ae -> {
             int cellsToAdd = Integer.parseInt(gbSizeNumber.getText());
-            multiscaleModellingPanel.colorSelectedBounaries(cellsToAdd);
+            double percentage = multiscaleModellingPanel.colorSelectedBounaries(cellsToAdd);
+            Double d = Double.valueOf(percentage);
+            label.setText(label.getText() + " " + d + "%");
             multiscaleModellingPanel.repaint();
         });
         p_options.add(addButton);

@@ -3,6 +3,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import com.sun.org.apache.bcel.internal.generic.ARETURN;
+
 public class Cells {
 
     public static final String CIRCLE = "Circle";
@@ -205,7 +207,7 @@ public class Cells {
 
     }
 
-    public void colorBoundaries(int gbSize) {
+    public double colorBoundaries(int gbSize) {
         cells.forEach(cell -> {
             Cell neighbourCell = getCellByXAndY(cells, cell.x + 1, cell.y);
             if (neighbourCell == null) {
@@ -224,10 +226,11 @@ public class Cells {
                 }
             }
         });
-
+        long deadCells = cells.stream().filter(Cell::isDead).count();
+        return deadCells / cells.size() * 100;
     }
 
-    public void colorSelectedBoundaries(int gbSize) {
+    public double colorSelectedBoundaries(int gbSize) {
         cells.forEach(cell -> {
             if (savedCells.contains(cell.getId())) {
                 Cell neighbourCell = getCellByXAndY(cells, cell.x + 1, cell.y);
@@ -267,6 +270,8 @@ public class Cells {
                 }
             }
         });
+        long deadCells = cells.stream().filter(Cell::isDead).count();
+        return (double) deadCells / cells.size() * 100;
     }
 
     public void clearWithBoundaries() {

@@ -150,12 +150,12 @@ public class MultiscaleModellingPanel extends JPanel implements Runnable, MouseL
         cells.resetWithSelectedCells(selected);
     }
 
-    public void colorBounaries(int cellsToAdd) {
-        cells.colorBoundaries(cellsToAdd);
+    public double colorBounaries(int cellsToAdd) {
+        return cells.colorBoundaries(cellsToAdd);
     }
 
-    public void colorSelectedBounaries(int cellsToAdd) {
-        cells.colorSelectedBoundaries(cellsToAdd);
+    public double colorSelectedBounaries(int cellsToAdd) {
+       return cells.colorSelectedBoundaries(cellsToAdd);
     }
 
     public void clearWithBoundaries() {
